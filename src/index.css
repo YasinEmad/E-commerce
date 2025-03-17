@@ -1,0 +1,23 @@
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap');
+*{
+  font-family: "Open Sans", serif;
+}
+
+/* متصفحات WebKit (Chrome, Edge, Safari) */
+::-webkit-scrollbar {
+  width: 8px; /* تغيير العرض */
+}
+
+::-webkit-scrollbar-track {
+  background: #1e1e1e; /* لون الخلفية الداكن */
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #195c47; /* اللون الأخضر */
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #25755d; /* لون أغمق عند التحويم */
+}
