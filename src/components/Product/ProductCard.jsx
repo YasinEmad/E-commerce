@@ -38,7 +38,6 @@ const ProductCard = ({ product }) => {
       position: 'top-end',
       toast: true,
       showConfirmButton: false,
-      backdrop: false,
       customClass: {
         popup: 'small-swal',
       },
