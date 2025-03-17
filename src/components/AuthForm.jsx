@@ -78,7 +78,7 @@ const AuthForm = ({ setUser }) => {
         }}
       >
         <source
-          src="/public/video/6918396_Motion Graphics_Motion Graphic_3840x2160.mp4"
+          src="/video/motiongraphic.mp4"
           type="video/mp4"
         />
       </video>
