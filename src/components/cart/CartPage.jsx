@@ -72,7 +72,7 @@ const CartPage = () => {
       });
       return;
     }
-
+  
     Swal.fire({
       title: "Are you sure?",
       text: "You are about to confirm your purchase.",
@@ -89,9 +89,12 @@ const CartPage = () => {
           totalPrice: totalPrice,
           status: "Processing",
         };
-        dispatch(addOrder(order)); // Add order to Redux store
-        dispatch(setCart([])); // Clear the cart
-        localStorage.removeItem("cart"); // Clear cart from localStorage
+  
+        dispatch(addOrder(order));
+        dispatch(setCart([]));
+        localStorage.removeItem("cart");
+  
+        // Toast Notification - بدون خلفية
         Swal.fire({
           toast: true,
           position: "top-end",
@@ -100,11 +103,12 @@ const CartPage = () => {
           showConfirmButton: false,
           timer: 3000,
         });
-        navigate("/order-tracking"); // Navigate to order tracking page
+  
+        navigate("/order-tracking");
       }
     });
   }, [cartItems, totalPrice, dispatch, navigate]);
-
+  
   return (
     <Container
       maxWidth="lg"
