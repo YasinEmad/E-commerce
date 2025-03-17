@@ -8,7 +8,7 @@ import HeroSection from "./components/hero/Hero_section";
 import Features from "./components/hero/Feature";
 import CategoryToggle from "./components/hero/CategoryToggle";
 import ProductList from "./components/Product/ProductList";
-import CartPage from "./components/cart/Cartpage";
+import CartPage from './components/cart/CartPage';
 import Footer from "./components/Footer";
 import AuthForm from "./components/AuthForm";
 import About from "./components/About";
