@@ -34,7 +34,7 @@ export default function HeroSection() {
                 <CardMedia
                   component="img"
                   sx={{ height: { xs: 250, md: 400 } }}
-                  image="/images/gettyimages-1400453872-640x640.jpg"
+                  image="/images/download (4).jfif"
                   alt="Slider Image 1"
                 />
                 <motion.div
@@ -78,7 +78,7 @@ export default function HeroSection() {
                 <CardMedia
                   component="img"
                   sx={{ height: { xs: 250, md: 400 } }}
-                  image="/images/pexels-vlada-karpovich-8368049.jpg"
+                  image="/images/iphone (2).jfif"
                   alt="Slider Image 2"
                 />
                 <motion.div

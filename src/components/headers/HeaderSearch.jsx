@@ -13,17 +13,17 @@ const HeaderSearch = ({ language }) => {
   const categories = {
     English: [
       { label: "All Categories", value: "" },
-      { label: "Men", value: "men's clothing" },
-      { label: "Women", value: "women's clothing" },
-      { label: "Jewelery", value: "jewelery" },
-      { label: "Electronics", value: "electronics" },
+      { label: "Smartphones", value: "smartphones" },
+      { label: "Laptops", value: "laptops" },
+      { label: "Fragrances", value: "fragrances" },
+      { label: "Home Decoration", value: "home-decoration" },
     ],
     العربية: [
       { label: "كل الفئات", value: "" },
-      { label: "رجالي", value: "men's clothing" },
-      { label: "نسائي", value: "women's clothing" },
-      { label: "مجوهرات", value: "jewelery" },
-      { label: "إلكترونيات", value: "electronics" },
+      { label: "هواتف ذكية", value: "smartphones" },
+      { label: "لابتوبات", value: "laptops" },
+      { label: "عطور", value: "fragrances" },
+      { label: "ديكور منزلي", value: "home-decoration" },
     ],
   };
 

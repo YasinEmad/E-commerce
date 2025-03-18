@@ -4,26 +4,34 @@ import { motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 
+// تعريف الفئات المتاحة
 const categories = {
   English: [
-    { label: "Men", value: "men's clothing" },
-    { label: "Women", value: "women's clothing" },
-    { label: "Jewelery", value: "jewelery" },
-    { label: "Electronics", value: "electronics" },
+    { label: "Smartphones", value: "smartphones" },
+    { label: "Laptops", value: "laptops" },
+    { label: "Fragrances", value: "fragrances" },
+    { label: "Home Decoration", value: "home-decoration" },
   ],
   العربية: [
-    { label: "رجالي", value: "men's clothing" },
-    { label: "نسائي", value: "women's clothing" },
-    { label: "مجوهرات", value: "jewelery" },
-    { label: "إلكترونيات", value: "electronics" },
+    { label: "هواتف ذكية", value: "smartphones" },
+    { label: "لابتوبات", value: "laptops" },
+    { label: "عطور", value: "fragrances" },
+    { label: "ديكور منزلي", value: "home-decoration" },
   ],
 };
 
-const CategoryToggle = ({ category, setCategory }) => {
+const CategoryToggle = ({ category: propCategory, setCategory: propSetCategory }) => {
   const theme = useTheme();
   const language = useSelector((state) => state.language.language);
   const tabsRef = useRef(null);
   const [indicatorStyle, setIndicatorStyle] = useState({ left: 0, width: 0 });
+  const [category, setCategory] = useState(propCategory || "laptops");
+
+  useEffect(() => {
+    if (propCategory) {
+      setCategory(propCategory);
+    }
+  }, [propCategory]);
 
   useEffect(() => {
     if (tabsRef.current) {
@@ -35,6 +43,11 @@ const CategoryToggle = ({ category, setCategory }) => {
       }
     }
   }, [category, language]);
+
+  const handleCategoryChange = (_, newValue) => {
+    setCategory(newValue);
+    propSetCategory(newValue);
+  };
 
   return (
     <Box
@@ -48,31 +61,28 @@ const CategoryToggle = ({ category, setCategory }) => {
         mb: 4,
       }}
     >
-      {/* Full-Width Image */}
+      {/* صورة الخلفية */}
       <Box
-  sx={{
-    width: "100%",
-    height: "200px",
-    backgroundImage: `url("/images/wave (1).svg")`, // مسار صحيح داخل public
-    backgroundSize: "cover",
-    backgroundPosition: "center",
-    backgroundRepeat: "no-repeat",
-    borderRadius: "8px",
-    overflow: "hidden",
-    mb: 4,
-  }}
-/>
+        sx={{
+          width: "100%",
+          height: "200px",
+          backgroundImage: `url("/images/wave (1).svg")`, // تأكد من وجود الصورة في مجلد public
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+          borderRadius: "8px",
+          overflow: "hidden",
+          mb: 4,
+        }}
+      />
 
-
-
-      {/* Category Toggle */}
-           {/* Category Toggle */}  
-           <Box
+      {/* تبويب الفئات */}
+      <Box
         sx={{
           position: "absolute",
-          top: "70%", // يجعله في منتصف الصورة
+          top: "70%",
           left: "50%",
-          transform: "translate(-50%, -50%)", // يضبطه ليكون في المنتصف تمامًا
+          transform: "translate(-50%, -50%)",
           maxWidth: 500,
           width: "100%",
           borderRadius: 2,
@@ -81,11 +91,10 @@ const CategoryToggle = ({ category, setCategory }) => {
           bgcolor: theme.palette.background.paper,
         }}
       >
-
         <Tabs
           ref={tabsRef}
           value={category}
-          onChange={(_, newValue) => setCategory(newValue)}
+          onChange={handleCategoryChange}
           centered
           textColor="primary"
           TabIndicatorProps={{ style: { display: "none" } }}
@@ -137,8 +146,12 @@ const CategoryToggle = ({ category, setCategory }) => {
 };
 
 CategoryToggle.propTypes = {
-  category: PropTypes.string.isRequired,
+  category: PropTypes.string,
   setCategory: PropTypes.func.isRequired,
+};
+
+CategoryToggle.defaultProps = {
+  category: "laptops",
 };
 
 export default CategoryToggle;

@@ -14,7 +14,11 @@ import {
   Paper,
   TableContainer,
   Skeleton,
+  Button,
+  Chip,
+  Tooltip as MuiTooltip,
 } from "@mui/material";
+import { styled } from "@mui/material/styles";
 import { motion } from "framer-motion";
 import {
   Legend,
@@ -32,7 +36,24 @@ import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import PendingIcon from "@mui/icons-material/Pending";
 import LocalShippingIcon from "@mui/icons-material/LocalShipping";
 import CancelIcon from "@mui/icons-material/Cancel";
+import DeleteIcon from "@mui/icons-material/Delete";
 import { setOrders } from "../Redux/ordersSlice";
+
+// Styled components for table
+const StyledTableRow = styled(TableRow)(({ theme }) => ({
+  "&:nth-of-type(odd)": {
+    backgroundColor: theme.palette.action.hover,
+  },
+  "&:hover": {
+    backgroundColor: theme.palette.grey[200],
+    transition: "background-color 0.2s ease-in-out",
+  },
+}));
+
+const StyledTableCell = styled(TableCell)(({ theme }) => ({
+  padding: theme.spacing(1.5),
+  fontSize: "0.9rem",
+}));
 
 const OrderTrackingPage = () => {
   const dispatch = useDispatch();
@@ -78,6 +99,22 @@ const OrderTrackingPage = () => {
     return translatedStatus;
   };
 
+  const getStatusChip = (status, language) => {
+    const label = language === "العربية" ? getStatusLabel(status) : status;
+    switch (status) {
+      case "Delivered":
+        return <Chip icon={<CheckCircleIcon />} label={label} color="success" size="small" />;
+      case "Pending":
+        return <Chip icon={<PendingIcon />} label={label} color="warning" size="small" />;
+      case "Shipped":
+        return <Chip icon={<LocalShippingIcon />} label={label} color="primary" size="small" />;
+      case "Cancelled":
+        return <Chip icon={<CancelIcon />} label={label} color="error" size="small" />;
+      default:
+        return <Chip label={label} size="small" />;
+    }
+  };
+
   useEffect(() => {
     let savedOrders = [];
     try {
@@ -98,8 +135,36 @@ const OrderTrackingPage = () => {
     }
   }, [orders]);
 
+  const handleCancelOrder = (orderId, itemId) => {
+    const updatedOrders = orders.map((order) =>
+      order.id === orderId
+        ? {
+            ...order,
+            items: order.items.map((item) =>
+              item.id === itemId ? { ...item, status: "Cancelled" } : item
+            ),
+          }
+        : order
+    );
+    dispatch(setOrders(updatedOrders));
+  };
+
+  const handleRemoveItem = (orderId, itemId) => {
+    const updatedOrders = orders.map((order) =>
+      order.id === orderId
+        ? {
+            ...order,
+            items: order.items.filter((item) => item.id !== itemId),
+          }
+        : order
+    );
+    dispatch(setOrders(updatedOrders));
+  };
+
   const statusCounts = orders.reduce((acc, order) => {
-    acc[order.status] = (acc[order.status] || 0) + 1;
+    order.items.forEach((item) => {
+      acc[item.status] = (acc[item.status] || 0) + 1;
+    });
     return acc;
   }, {});
 
@@ -162,29 +227,63 @@ const OrderTrackingPage = () => {
       ) : (
         <Grid container spacing={4}>
           <Grid item xs={12} md={8}>
-            <TableContainer component={Paper} elevation={3}>
-              <Table>
+            <TableContainer component={Paper} elevation={3} sx={{ maxHeight: 500, overflow: "auto" }}>
+              <Table stickyHeader aria-label="order tracking table">
                 <TableHead>
                   <TableRow>
-                    <TableCell>{language === "العربية" ? "المنتج" : "Product"}</TableCell>
-                    <TableCell align="right">{language === "العربية" ? "السعر" : "Price"}</TableCell>
-                    <TableCell align="right">{language === "العربية" ? "الكمية" : "Quantity"}</TableCell>
-                    <TableCell align="right">{language === "العربية" ? "المجموع" : "Total"}</TableCell>
-                    <TableCell align="right">{language === "العربية" ? "الشحن" : "Shipping"}</TableCell>
+                    <StyledTableCell>{language === "العربية" ? "المنتج" : "Product"}</StyledTableCell>
+                    <StyledTableCell align="right">{language === "العربية" ? "السعر" : "Price"}</StyledTableCell>
+                    <StyledTableCell align="right">{language === "العربية" ? "الكمية" : "Quantity"}</StyledTableCell>
+                    <StyledTableCell align="right">{language === "العربية" ? "المجموع" : "Total"}</StyledTableCell>
+                    <StyledTableCell align="right">{language === "العربية" ? "حالة المنتج" : "Product Status"}</StyledTableCell>
+                    <StyledTableCell align="right">{language === "العربية" ? "إجراء" : "Action"}</StyledTableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
                   {orders.map((order) =>
                     order.items.map((item) => (
-                      <TableRow key={item.id}>
-                        <TableCell>{item.title}</TableCell>
-                        <TableCell align="right">${item.price.toFixed(2)}</TableCell>
-                        <TableCell align="right">{item.quantity}</TableCell>
-                        <TableCell align="right">${(item.price * item.quantity).toFixed(2)}</TableCell>
-                        <TableCell align="right">
-                          {getStatusLabel(order.status)}
-                        </TableCell>
-                      </TableRow>
+                      <StyledTableRow key={item.id}>
+                        <StyledTableCell component="th" scope="row">
+                          {item.title}
+                        </StyledTableCell>
+                        <StyledTableCell align="right">${item.price.toFixed(2)}</StyledTableCell>
+                        <StyledTableCell align="right">{item.quantity}</StyledTableCell>
+                        <StyledTableCell align="right">${(item.price * item.quantity).toFixed(2)}</StyledTableCell>
+                        <StyledTableCell align="right">
+                          {getStatusChip(item.status, language)}
+                        </StyledTableCell>
+                        <StyledTableCell align="right">
+                          {item.status !== "Cancelled" && (
+                            <Box display="flex" justifyContent="flex-end" gap={1}>
+                              <MuiTooltip title={language === "العربية" ? "إلغاء الطلب" : "Cancel Order"}>
+                                <Button
+                                  variant="outlined"
+                                  color="error"
+                                  size="small"
+                                  onClick={() => handleCancelOrder(order.id, item.id)}
+                                  disabled={item.status === "Cancelled"}
+                                  aria-label="cancel order"
+                                  startIcon={<CancelIcon />}
+                                >
+                                  {language === "العربية" ? "إلغاء" : "Cancel"}
+                                </Button>
+                              </MuiTooltip>
+                              <MuiTooltip title={language === "العربية" ? "حذف العنصر" : "Remove Item"}>
+                                <Button
+                                  variant="outlined"
+                                  color="secondary"
+                                  size="small"
+                                  onClick={() => handleRemoveItem(order.id, item.id)}
+                                  aria-label="remove item"
+                                  startIcon={<DeleteIcon />}
+                                >
+                                  {language === "العربية" ? "حذف" : "Remove"}
+                                </Button>
+                              </MuiTooltip>
+                            </Box>
+                          )}
+                        </StyledTableCell>
+                      </StyledTableRow>
                     ))
                   )}
                 </TableBody>

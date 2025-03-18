@@ -1,11 +1,20 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
+// دالة لجلب المنتجات حسب الفئة
 export const fetchProductsByCategory = createAsyncThunk(
   "products/fetchByCategory",
   async (category) => {
-    const response = await fetch(`https://fakestoreapi.com/products/category/${category}`);
+    // إذا كانت الفئة محددة، نستخدم endpoint الفئة
+    if (category) {
+      const response = await fetch(`https://dummyjson.com/products/category/${category}`);
+      const data = await response.json();
+      return data.products;
+    }
+
+    // إذا لم يتم تحديد فئة، نستخدم endpoint المنتجات العامة
+    const response = await fetch(`https://dummyjson.com/products`);
     const data = await response.json();
-    return data;
+    return data.products;
   }
 );
 
@@ -13,7 +22,7 @@ const productsSlice = createSlice({
   name: "products",
   initialState: {
     items: [],
-    status: "idle",
+    status: "idle", // يمكن أن تكون: idle, loading, succeeded, failed
   },
   reducers: {},
   extraReducers: (builder) => {

@@ -22,8 +22,9 @@ const ProductCard = ({ product }) => {
   const [open, setOpen] = useState(false);
   const dispatch = useDispatch();
 
-  const discountedPrice = product.discount
-    ? (product.price * (1 - product.discount / 100)).toFixed(2)
+  // حساب السعر بعد الخصم
+  const discountedPrice = product.discountPercentage
+    ? (product.price * (1 - product.discountPercentage / 100)).toFixed(2)
     : product.price.toFixed(2);
 
   const handleCartClick = (e) => {
@@ -97,7 +98,7 @@ const ProductCard = ({ product }) => {
           <CardMedia
             component="img"
             height="280"
-            image={product.image}
+            image={product.thumbnail} // استخدام thumbnail بدلًا من image
             alt={product.title}
             sx={{
               objectFit: 'cover',
@@ -105,9 +106,9 @@ const ProductCard = ({ product }) => {
               '&:hover': { transform: 'scale(1.08)' },
             }}
           />
-          {product.discount > 0 && (
+          {product.discountPercentage > 0 && ( // استخدام discountPercentage بدلًا من discount
             <Chip
-              label={`-${product.discount}% OFF`}
+              label={`-${product.discountPercentage}% OFF`} // عرض نسبة الخصم
               color="error"
               sx={{ position: 'absolute', top: 8, left: 8, fontWeight: 'bold', zIndex: 1 }}
             />
@@ -128,7 +129,7 @@ const ProductCard = ({ product }) => {
             <Typography variant="h6" color="primary" sx={{ fontWeight: 'bold' }}>
               ${discountedPrice}
             </Typography>
-            {product.discount > 0 && (
+            {product.discountPercentage > 0 && ( // استخدام discountPercentage بدلًا من discount
               <Typography variant="body2" color="text.secondary" sx={{ textDecoration: 'line-through' }}>
                 ${product.price.toFixed(2)}
               </Typography>
@@ -156,7 +157,7 @@ const ProductCard = ({ product }) => {
           <Box sx={{ display: 'grid', gap: 3, gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, alignItems: 'start', pt: 2 }}>
             <CardMedia
               component="img"
-              image={product.image}
+              image={product.thumbnail} // استخدام thumbnail بدلًا من image
               alt={product.title}
               sx={{
                 width: '100%',
@@ -177,7 +178,7 @@ const ProductCard = ({ product }) => {
                 <Typography variant="h5" color="primary" sx={{ fontWeight: 'bold' }}>
                   ${discountedPrice}
                 </Typography>
-                {product.discount > 0 && (
+                {product.discountPercentage > 0 && ( // استخدام discountPercentage بدلًا من discount
                   <Typography variant="body1" color="text.secondary" sx={{ textDecoration: 'line-through' }}>
                     ${product.price.toFixed(2)}
                   </Typography>
@@ -212,8 +213,9 @@ ProductCard.propTypes = {
     title: PropTypes.string.isRequired,
     description: PropTypes.string.isRequired,
     price: PropTypes.number.isRequired,
-    discount: PropTypes.number,
-    image: PropTypes.string.isRequired,
+    discountPercentage: PropTypes.number, // تغيير discount إلى discountPercentage
+    thumbnail: PropTypes.string.isRequired, // تغيير image إلى thumbnail
+    images: PropTypes.arrayOf(PropTypes.string), // إضافة images
   }).isRequired,
 };
 

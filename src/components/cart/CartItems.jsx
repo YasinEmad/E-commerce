@@ -32,8 +32,8 @@ const CartItems = ({ cartItems, handleRemoveFromCart, theme }) => {
               <CardMedia
                 component="img"
                 height="120"
-                image={item.image}
-                alt={item.title} // استخدام title بدلاً من name
+                image={item.thumbnail} // استخدام thumbnail بدلًا من image
+                alt={item.title}
                 sx={{ borderRadius: 2 }}
               />
               <CardContent sx={{ py: 1, flexGrow: 1 }}>
@@ -95,8 +95,7 @@ CartItems.propTypes = {
       id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
       title: PropTypes.string.isRequired,
       price: PropTypes.number.isRequired,
-      image: PropTypes.string.isRequired,
-      // name: PropTypes.string.isRequired, // إزالة name
+      thumbnail: PropTypes.string.isRequired,
     })
   ).isRequired,
   handleRemoveFromCart: PropTypes.func.isRequired,
