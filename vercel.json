@@ -1,13 +1,14 @@
 {
     "rewrites": [
       {
-        "source": "/api/products/:category",
-        "destination": "https://dummyjson.com/products/category/:category"
-      },
-      {
-        "source": "/api/products",
-        "destination": "https://dummyjson.com/products"
+        "source": "/api/(.*)",
+        "destination": "/api"
       }
-    ]
+    ],
+    "functions": {
+      "api/*.js": {
+        "memory": 128,
+        "maxDuration": 10
+      }
+    }
   }
-  

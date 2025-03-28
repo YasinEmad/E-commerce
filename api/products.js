@@ -1,5 +1,5 @@
 export default async function handler(req, res) {
-    const { category } = req.query; // جلب الفئة من الاستعلام
+    const { category } = req.query;
     const endpoint = category 
       ? `https://dummyjson.com/products/category/${category}` 
       : `https://dummyjson.com/products`;
