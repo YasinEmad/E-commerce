@@ -16,37 +16,43 @@ import OrderTrackingPage from "./components/followproduct/OrderTracking";
 
 const validCategories = ["men's clothing", "women's clothing", "jewelery", "electronics"];
 
-function App() {
-  const [theme, colorMode] = useMode();
-  const [category, setCategory] = useState(() => {
-    // Retrieve category from local storage, defaulting to the first valid category if not found
+const getStoredCategory = () => {
+  try {
     const savedCategory = localStorage.getItem("category");
     return validCategories.includes(savedCategory) ? savedCategory : validCategories[0];
-  });
-  const [user, setUser] = useState(() => {
-    // Retrieve user from local storage, parsing it as JSON
-    const savedUser = localStorage.getItem("user");
-    return savedUser ? JSON.parse(savedUser) : null;
-  });
+  } catch {
+    return validCategories[0];
+  }
+};
+
+const getStoredUser = () => {
+  try {
+    return JSON.parse(localStorage.getItem("user")) || null;
+  } catch {
+    return null;
+  }
+};
+
+function App() {
+  const [theme, colorMode] = useMode();
+  const [category, setCategory] = useState(getStoredCategory);
+  const [user, setUser] = useState(getStoredUser);
   const location = useLocation();
   const navigate = useNavigate();
 
-  // Define hidden pages where headers and footers should not appear
-  const isHiddenPage = ["/auth"].includes(location.pathname);
+  const hiddenPages = ["/auth", "/checkout"];
+  const isHiddenPage = hiddenPages.includes(location.pathname);
 
   useEffect(() => {
-    // Redirect to /auth if the user is not logged in
-    if (!user) {
+    if (!user && location.pathname !== "/auth") {
       navigate("/auth");
     }
-  }, [user, navigate]);
+  }, [user, navigate, location.pathname]);
 
-  // Save category to local storage whenever it changes
   useEffect(() => {
     localStorage.setItem("category", category);
   }, [category]);
 
-  // Save user to local storage whenever it changes
   useEffect(() => {
     if (user) {
       localStorage.setItem("user", JSON.stringify(user));
@@ -60,7 +66,6 @@ function App() {
       <ThemeProvider theme={theme}>
         <CssBaseline />
 
-        {/* Common Header and Sections */}
         {!isHiddenPage && (
           <>
             <Header1 />
@@ -68,12 +73,9 @@ function App() {
           </>
         )}
 
-        {/* Routing Configuration */}
         <Routes>
-          {/* Auth Page */}
           <Route path="/auth" element={<AuthForm setUser={setUser} />} />
 
-          {/* Home Page */}
           <Route
             path="/"
             element={
@@ -86,48 +88,12 @@ function App() {
             }
           />
 
-          {/* Cart Page */}
-          <Route
-            path="/cart"
-            element={
-              <>
-                <CartPage />
-              </>
-            }
-          />
-
-          {/* About Page */}
-          <Route
-            path="/about"
-            element={
-              <>
-                <About />
-              </>
-            }
-          />
-
-          {/* Follow Product Page */}
-          <Route
-            path="/follow-product"
-            element={
-              <>
-                <OrderTrackingPage />
-              </>
-            }
-          />
-
-          {/* Order Tracking Page */}
-          <Route
-            path="/order-tracking"
-            element={
-              <>
-                <OrderTrackingPage />
-              </>
-            }
-          />
+          <Route path="/cart" element={<CartPage />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/follow-product" element={<OrderTrackingPage />} />
+          <Route path="/order-tracking" element={<OrderTrackingPage />} />
         </Routes>
 
-        {/* Common Footer */}
         {!isHiddenPage && <Footer />}
       </ThemeProvider>
     </ColorModeContext.Provider>
