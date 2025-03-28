@@ -4,15 +4,9 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 export const fetchProductsByCategory = createAsyncThunk(
   "products/fetchByCategory",
   async (category) => {
-    // إذا كانت الفئة محددة، نستخدم endpoint الفئة
-    if (category) {
-      const response = await fetch(`https://dummyjson.com/products/category/${category}`);
-      const data = await response.json();
-      return data.products;
-    }
-
-    // إذا لم يتم تحديد فئة، نستخدم endpoint المنتجات العامة
-    const response = await fetch(`https://dummyjson.com/products`);
+    // إذا كانت الفئة محددة، نستخدم endpoint الفئة من Vercel
+    const endpoint = category ? `/api/products/${category}` : `/api/products`;
+    const response = await fetch(endpoint);
     const data = await response.json();
     return data.products;
   }

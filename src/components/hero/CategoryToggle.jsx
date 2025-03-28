@@ -1,10 +1,9 @@
 import PropTypes from "prop-types";
 import { Box, Tabs, Tab, useTheme } from "@mui/material";
 import { motion } from "framer-motion";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useMemo } from "react";
 import { useSelector } from "react-redux";
 
-// تعريف الفئات المتاحة
 const categories = {
   English: [
     { label: "Smartphones", value: "smartphones" },
@@ -20,23 +19,44 @@ const categories = {
   ],
 };
 
-const CategoryToggle = ({ category: propCategory, setCategory: propSetCategory }) => {
+const CategoryToggle = ({
+  category: propCategory = "laptops",
+  setCategory: propSetCategory,
+}) => {
   const theme = useTheme();
   const language = useSelector((state) => state.language.language);
   const tabsRef = useRef(null);
+
+  const validCategories = useMemo(() => {
+    return categories[language].map((c) => c.value);
+  }, [language]);
+
+  const defaultCategory = validCategories.includes(propCategory)
+    ? propCategory
+    : validCategories[0];
+
+  const [category, setCategory] = useState(defaultCategory);
   const [indicatorStyle, setIndicatorStyle] = useState({ left: 0, width: 0 });
-  const [category, setCategory] = useState(propCategory || "laptops");
 
   useEffect(() => {
-    if (propCategory) {
+    if (propCategory && validCategories.includes(propCategory)) {
       setCategory(propCategory);
     }
-  }, [propCategory]);
+  }, [propCategory, validCategories]);
+
+  useEffect(() => {
+    if (!validCategories.includes(category)) {
+      const fallback = validCategories[0];
+      setCategory(fallback);
+      propSetCategory(fallback);
+    }
+  }, [category, validCategories, propSetCategory]);
 
   useEffect(() => {
     if (tabsRef.current) {
       const index = categories[language].findIndex((c) => c.value === category);
       const tabElements = tabsRef.current.querySelectorAll(".MuiTab-root");
+
       if (tabElements[index]) {
         const { offsetLeft, offsetWidth } = tabElements[index];
         setIndicatorStyle({ left: offsetLeft, width: offsetWidth });
@@ -61,12 +81,11 @@ const CategoryToggle = ({ category: propCategory, setCategory: propSetCategory }
         mb: 4,
       }}
     >
-      {/* صورة الخلفية */}
       <Box
         sx={{
           width: "100%",
           height: "200px",
-          backgroundImage: `url("/images/wave (1).svg")`, // تأكد من وجود الصورة في مجلد public
+          backgroundImage: `url("/images/wave (1).svg")`,
           backgroundSize: "cover",
           backgroundPosition: "center",
           backgroundRepeat: "no-repeat",
@@ -76,7 +95,6 @@ const CategoryToggle = ({ category: propCategory, setCategory: propSetCategory }
         }}
       />
 
-      {/* تبويب الفئات */}
       <Box
         sx={{
           position: "absolute",
@@ -125,6 +143,7 @@ const CategoryToggle = ({ category: propCategory, setCategory: propSetCategory }
           {categories[language].map(({ label, value }) => (
             <Tab key={value} label={label} value={value} />
           ))}
+
           <motion.div
             layout
             transition={{ type: "spring", stiffness: 300, damping: 20 }}
@@ -148,10 +167,6 @@ const CategoryToggle = ({ category: propCategory, setCategory: propSetCategory }
 CategoryToggle.propTypes = {
   category: PropTypes.string,
   setCategory: PropTypes.func.isRequired,
-};
-
-CategoryToggle.defaultProps = {
-  category: "laptops",
 };
 
 export default CategoryToggle;

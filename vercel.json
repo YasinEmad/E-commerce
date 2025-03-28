@@ -1,0 +1,13 @@
+{
+    "rewrites": [
+      {
+        "source": "/api/products/:category",
+        "destination": "https://dummyjson.com/products/category/:category"
+      },
+      {
+        "source": "/api/products",
+        "destination": "https://dummyjson.com/products"
+      }
+    ]
+  }
+  
