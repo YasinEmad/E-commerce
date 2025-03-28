@@ -5,8 +5,8 @@ export const fetchProductsByCategory = createAsyncThunk(
   async (category, { rejectWithValue }) => {
     try {
       const endpoint = category 
-        ? `https://your-app.vercel.app/api/products?category=${category}` 
-        : `https://your-app.vercel.app/api/products`;
+        ? `/api/products?category=${category}` 
+        : `/api/products`;
       const response = await fetch(endpoint);
       if (!response.ok) throw new Error("فشل في جلب المنتجات");
       const data = await response.json();
