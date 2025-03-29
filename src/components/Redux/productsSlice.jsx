@@ -1,16 +1,22 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
+// دالة لجلب المنتجات حسب الفئة
 export const fetchProductsByCategory = createAsyncThunk(
   "products/fetchByCategory",
   async (category, { rejectWithValue }) => {
     try {
-      const endpoint = category 
-        ? `/api/products?category=${category}` 
-        : `/api/products`;
+      const endpoint = category
+        ? `/api/products?category=${category}`
+        : "/api/products";
+
       const response = await fetch(endpoint);
-      if (!response.ok) throw new Error("فشل في جلب المنتجات");
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch products");
+      }
+
       const data = await response.json();
-      return data.products;
+      return data;
     } catch (error) {
       return rejectWithValue(error.message);
     }
@@ -21,7 +27,7 @@ const productsSlice = createSlice({
   name: "products",
   initialState: {
     items: [],
-    status: "idle",
+    status: "idle", // idle | loading | succeeded | failed
     error: null,
   },
   reducers: {},
@@ -37,7 +43,7 @@ const productsSlice = createSlice({
       })
       .addCase(fetchProductsByCategory.rejected, (state, action) => {
         state.status = "failed";
-        state.error = action.payload || "حدث خطأ ما";
+        state.error = action.payload;
       });
   },
 });
