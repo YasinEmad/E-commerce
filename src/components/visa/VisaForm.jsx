@@ -1,5 +1,5 @@
     import React, { useState } from "react";
-    import PropTypes from "prop-types"; // Import PropTypes
+    import PropTypes from "prop-types";
     import { motion } from "framer-motion";
     import {
     Box,
@@ -44,7 +44,6 @@
     },
     };
 
-    // Initial empty state for the form
     const initialFormData = {
     cardHolderName: "",
     issueDate: new Date().toISOString().split("T")[0],
@@ -53,15 +52,14 @@
     initialBalance: "",
     dailyLimit: "",
     password: "",
-    status: "active", // Default status, can be hidden if not user-settable
+    status: "active",
     };
 
     function VisaForm({ onSubmitVisa, initialError }) {
     const [formData, setFormData] = useState(initialFormData);
     const [showPassword, setShowPassword] = useState(false);
-    const [formError, setFormError] = useState(initialError); // Local form errors
+    const [formError, setFormError] = useState(initialError);
 
-    // Update local error if initialError prop changes
     React.useEffect(() => {
         setFormError(initialError);
     }, [initialError]);
@@ -69,14 +67,13 @@
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData((prev) => ({ ...prev, [name]: value }));
-        setFormError(null); // Clear error on input change
+        setFormError(null);
     };
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        setFormError(null); // Clear previous errors
+        setFormError(null);
 
-        // --- Form Validation ---
         const requiredFields = [
         "cardHolderName",
         "initialBalance",
@@ -90,7 +87,6 @@
         setFormError(
             `يرجى ملء جميع الحقول الإلزامية: ${missingFields
             .map((f) => {
-                // Simple mapping for user-friendly names
                 if (f === "cardHolderName") return "اسم حامل البطاقة";
                 if (f === "initialBalance") return "الرصيد الابتدائي";
                 if (f === "dailyLimit") return "الحد اليومي";
@@ -120,9 +116,7 @@
         setFormError("تاريخ الانتهاء يجب أن يكون بعد تاريخ الإصدار.");
         return;
         }
-        // --- End Validation ---
 
-        // If validation passes, call the onSubmitVisa prop with the data
         onSubmitVisa(formData);
     };
 
@@ -141,7 +135,6 @@
 
             <Box component="form" onSubmit={handleSubmit} sx={{ mt: 2 }}>
                 <Grid container spacing={2}>
-                {/* --- Form Fields --- */}
                 <Grid item xs={12}>
                     <TextField
                     fullWidth
@@ -207,10 +200,10 @@
                     name="issueDate"
                     type="date"
                     value={formData.issueDate}
-                    onChange={handleChange} // Keep onChange in case you allow editing later
+                    onChange={handleChange}
                     required
                     InputLabelProps={{ shrink: true }}
-                    disabled // Usually set by the system
+                    disabled
                     InputProps={{
                         startAdornment: (
                         <InputAdornment position="start">
@@ -232,7 +225,7 @@
                     required
                     InputLabelProps={{ shrink: true }}
                     InputProps={{
-                        inputProps: { min: new Date().toISOString().split("T")[0] }, // Can't expire in the past
+                        inputProps: { min: new Date().toISOString().split("T")[0] },
                         startAdornment: (
                         <InputAdornment position="start">
                             <DateRange />
@@ -299,7 +292,6 @@
                     </Typography>
                 </Grid>
 
-                {/* --- Submit Button --- */}
                 <Grid item xs={12}>
                     <motion.div
                     whileHover={{ scale: 1.02 }}
@@ -325,18 +317,13 @@
     );
     }
 
-    // --- Define propTypes ---
     VisaForm.propTypes = {
-    onSubmitVisa: PropTypes.func.isRequired, // Function is required
-    initialError: PropTypes.string, // String, but can be null/undefined (not required)
+    onSubmitVisa: PropTypes.func.isRequired,
+    initialError: PropTypes.string,
     };
 
-    // --- Define defaultProps ---
     VisaForm.defaultProps = {
-    initialError: null, // Default value for initialError is null
+    initialError: null,
     };
-
-    // Function to reset the form state (optional, as key reset is used in parent)
-    // VisaForm.resetForm = () => initialFormData;
 
     export default VisaForm;
