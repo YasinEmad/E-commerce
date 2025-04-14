@@ -1,3 +1,4 @@
+// App.js
 import { useState, useEffect } from "react";
 import { Routes, Route, useLocation, useNavigate } from "react-router-dom";
 import { CssBaseline, ThemeProvider } from "@mui/material";
@@ -13,6 +14,7 @@ import Footer from "./components/Footer";
 import AuthForm from "./components/AuthForm";
 import About from "./components/About";
 import OrderTrackingPage from "./components/followproduct/OrderTracking";
+import CreateVisa from "./components/visa/CreateVisa";
 
 const validCategories = ["men's clothing", "women's clothing", "jewelery", "electronics"];
 
@@ -40,7 +42,7 @@ function App() {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const hiddenPages = ["/auth", "/checkout"];
+  const hiddenPages = ["/auth"];
   const isHiddenPage = hiddenPages.includes(location.pathname);
 
   useEffect(() => {
@@ -75,23 +77,19 @@ function App() {
 
         <Routes>
           <Route path="/auth" element={<AuthForm setUser={setUser} />} />
-
-          <Route
-            path="/"
-            element={
-              <>
-                <HeroSection />
-                <Features />
-                <CategoryToggle category={category} setCategory={setCategory} />
-                <ProductList category={category} />
-              </>
-            }
-          />
-
+          <Route path="/" element={
+            <>
+              <HeroSection />
+              <Features />
+              <CategoryToggle category={category} setCategory={setCategory} />
+              <ProductList category={category} />
+            </>
+          } />
           <Route path="/cart" element={<CartPage />} />
           <Route path="/about" element={<About />} />
           <Route path="/follow-product" element={<OrderTrackingPage />} />
           <Route path="/order-tracking" element={<OrderTrackingPage />} />
+          <Route path="/createvisa" element={<CreateVisa />} />
         </Routes>
 
         {!isHiddenPage && <Footer />}
