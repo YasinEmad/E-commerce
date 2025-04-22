@@ -94,7 +94,7 @@ const OrderSummary = ({
       if (!cardToUse) throw new Error("معرف البطاقة غير صحيح أو غير موجود.");
       if (cardToUse.password !== passwordInput) throw new Error("كلمة المرور غير صحيحة.");
       if (cardToUse.status !== "active") throw new Error(`البطاقة (${trimmedCardIdInput}) غير نشطة.`);
-      if (cardToUse.balance < totalPrice) throw new Error(`رصيد البطاقة (${trimmedCardIdInput}) غير كافٍ.`);
+      if (cardToUse.balance < totalPrice) throw new Error(`رصيد البطاقة (${trimmedCardIdInput}) غير كافٍ.`); // الخطأ لا يزال باللغة العربية ولكن بدون العملة
 
       // --- التحقق من البطاقة ناجح ---
 
@@ -265,7 +265,7 @@ const OrderSummary = ({
                 disableGutters
                 secondaryAction={
                   <Typography variant="body1" color="text.secondary" fontWeight="medium">
-                    {item.price.toFixed(2)} ر.س
+                    ${item.price.toFixed(2)} {/* <-- تم التغيير هنا */}
                   </Typography>
                 }
                 sx={{ borderBottom: `1px dashed ${theme.palette.divider}`, py: 1.5 }}
@@ -284,7 +284,7 @@ const OrderSummary = ({
         <Box sx={{ my: 2, textAlign: 'right' }}>
              <Divider sx={{ mb: 2 }} />
             <Typography variant="h5" fontWeight="bold" color="secondary.main">
-              الإجمالي: {totalPrice.toFixed(2)} ر.س
+              الإجمالي: ${totalPrice.toFixed(2)} {/* <-- تم التغيير هنا */}
             </Typography>
         </Box>
 
@@ -336,7 +336,7 @@ const OrderSummary = ({
                   {/* زر تأكيد الرمز وإتمام الشراء */}
                  <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} style={{ width: "100%", marginTop: "1rem" }}>
                     <Button type="submit" variant="contained" color="success" fullWidth disabled={isLoading || codeInput.length !== 6} size="large" sx={{ py: 1.5, fontSize: "1.1rem", borderRadius: 2, boxShadow: 3, textTransform: "none" }} startIcon={isLoading ? <CircularProgress size={20} color="inherit" /> : <ShoppingCartCheckout />}>
-                         {isLoading ? "جاري التأكيد النهائي..." : `تأكيد الرمز وإتمام الشراء (${totalPrice.toFixed(2)} ر.س)`}
+                         {isLoading ? "جاري التأكيد النهائي..." : `تأكيد الرمز وإتمام الشراء ($${totalPrice.toFixed(2)})`} {/* <-- تم التغيير هنا */}
                      </Button>
                  </motion.div>
              </Box>
