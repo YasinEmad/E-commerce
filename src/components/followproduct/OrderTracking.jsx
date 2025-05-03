@@ -17,6 +17,8 @@ import {
   Button,
   Chip,
   Tooltip as MuiTooltip,
+  Alert,
+  Snackbar,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { motion } from "framer-motion";
@@ -37,7 +39,13 @@ import PendingIcon from "@mui/icons-material/Pending";
 import LocalShippingIcon from "@mui/icons-material/LocalShipping";
 import CancelIcon from "@mui/icons-material/Cancel";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { setOrders } from "../Redux/ordersSlice";
+import { 
+  fetchOrders, 
+  updateOrderStatusAsync,
+  selectOrders,
+  selectOrdersStatus,
+  selectOrdersError
+} from "../Redux/ordersSlice";
 
 // Styled components for table
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
@@ -57,9 +65,28 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
 
 const OrderTrackingPage = () => {
   const dispatch = useDispatch();
-  const orders = useSelector((state) => state.orders.orders);
+  const orders = useSelector(selectOrders);
+  const status = useSelector(selectOrdersStatus);
+  const error = useSelector(selectOrdersError);
   const language = useSelector((state) => state.language.language);
-  const [isLoading, setIsLoading] = useState(true);
+  const isLoading = status === 'loading';
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = useState("success");
+
+  const handleCloseSnackbar = () => setOpenSnackbar(false);
+
+  const showMessage = (message, severity = "success") => {
+    setSnackbarMessage(message);
+    setSnackbarSeverity(severity);
+    setOpenSnackbar(true);
+  };
+
+  useEffect(() => {
+    if (error) {
+      showMessage(error, "error");
+    }
+  }, [error]);
 
   const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#AF19FF"];
 
@@ -116,37 +143,20 @@ const OrderTrackingPage = () => {
   };
 
   useEffect(() => {
-    let savedOrders = [];
-    try {
-      savedOrders = JSON.parse(localStorage.getItem("orders")) || [];
-    } catch (error) {
-      console.error("Failed to parse orders:", error);
-      localStorage.removeItem("orders");
-    }
-    dispatch(setOrders(savedOrders));
-    setIsLoading(false);
+    dispatch(fetchOrders());
   }, [dispatch]);
 
-  useEffect(() => {
+  const handleCancelOrder = async (orderId, itemId) => {
     try {
-      localStorage.setItem("orders", JSON.stringify(orders));
+      await dispatch(updateOrderStatusAsync({ 
+        orderId, 
+        itemId, 
+        status: "Cancelled" 
+      })).unwrap();
+      showMessage(language === "العربية" ? "تم إلغاء الطلب بنجاح" : "Order cancelled successfully");
     } catch (error) {
-      console.error("Failed to save orders:", error);
+      showMessage(error.message, "error");
     }
-  }, [orders]);
-
-  const handleCancelOrder = (orderId, itemId) => {
-    const updatedOrders = orders.map((order) =>
-      order.id === orderId
-        ? {
-            ...order,
-            items: order.items.map((item) =>
-              item.id === itemId ? { ...item, status: "Cancelled" } : item
-            ),
-          }
-        : order
-    );
-    dispatch(setOrders(updatedOrders));
   };
 
   const handleRemoveItem = (orderId, itemId) => {
@@ -365,6 +375,16 @@ const OrderTrackingPage = () => {
           </Grid>
         </Grid>
       )}
+      <Snackbar
+        open={openSnackbar}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+      >
+        <Alert onClose={handleCloseSnackbar} severity={snackbarSeverity} sx={{ width: "100%" }}>
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </Container>
   );
 };
