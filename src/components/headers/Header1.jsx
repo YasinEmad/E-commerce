@@ -97,9 +97,9 @@ export default function Header1() {
           </Menu>
 
           {/* عرض اللغة الحالية */}
-          <Typography variant="body1" sx={{ fontWeight: "bold", color: theme.palette.text.primary }}>
+          {/* <Typography variant="body1" sx={{ fontWeight: "bold", color: theme.palette.text.primary }}>
             {language}
-          </Typography>
+          </Typography> */}
 
         </Box>
       </Toolbar>
