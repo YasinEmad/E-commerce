@@ -1,15 +1,15 @@
-// import { useContext } from "react";
+import { useContext } from "react";
 import { useState } from "react";
-import { AppBar, Toolbar, IconButton, Box, Menu, MenuItem,  Typography } from "@mui/material";
-import {  Facebook, Twitter, Instagram, Language } from "@mui/icons-material";
-// import { ColorModeContext } from "../../theme";
+import { AppBar, Toolbar, IconButton, Box, Menu, MenuItem, Typography, Tooltip } from "@mui/material";
+import { Facebook, Twitter, Instagram, Language, DarkModeOutlined, LightModeOutlined } from "@mui/icons-material";
+import { ColorModeContext } from "../../theme";
 import { useTheme } from "@mui/material/styles";
 import { motion } from "framer-motion";
 import { useSelector, useDispatch } from "react-redux";
 import { setLanguage } from "../../components/Redux/languageSlice";
 
 export default function Header1() {
-  // const colorMode = useContext(ColorModeContext);
+  const colorMode = useContext(ColorModeContext);
   const theme = useTheme();
   const dispatch = useDispatch();
   const language = useSelector((state) => state.language.language);
@@ -58,13 +58,13 @@ export default function Header1() {
         <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
 
           {/* زر تبديل الوضع الليلي */}
-          {/* <Tooltip title="تبديل الوضع الداكن">
+          <Tooltip title={language === "English" ? "Toggle Dark Mode" : "تبديل الوضع الداكن"}>
             <motion.div whileHover={{ scale: 1.1 }} transition={{ duration: 0.3 }}>
               <IconButton onClick={colorMode.toggleColorMode} sx={{ color: theme.palette.text.primary }}>
                 {theme.palette.mode === "light" ? <DarkModeOutlined /> : <LightModeOutlined />}
               </IconButton>
             </motion.div>
-          </Tooltip> */}
+          </Tooltip>
 
           {/* أيقونات التواصل الاجتماعي */}
           {[Facebook, Twitter, Instagram].map((Icon, index) => (

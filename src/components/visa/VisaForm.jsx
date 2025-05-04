@@ -79,7 +79,9 @@ const StyledCard = styled(Card)(({ theme }) => ({
   borderRadius: theme.shape.borderRadius * 2, // Slightly more rounded corners
   boxShadow: theme.shadows[6], // A bit more prominent shadow
   overflow: "hidden", // Ensure content respects border radius
-  background: `linear-gradient(145deg, ${theme.palette.background.paper}, ${theme.palette.grey[100]})`, // Subtle gradient background
+  background: theme.palette.mode === "dark"
+    ? `linear-gradient(145deg, ${theme.palette.background.paper}, ${theme.palette.grey[900]})`
+    : `linear-gradient(145deg, ${theme.palette.background.paper}, ${theme.palette.grey[100]})`, // Subtle gradient background
   transition: "box-shadow 0.3s ease-in-out",
   "&:hover": {
     boxShadow: theme.shadows[10],
@@ -87,19 +89,27 @@ const StyledCard = styled(Card)(({ theme }) => ({
 }));
 
 const GradientButton = styled(Button)(({ theme }) => ({
-  background: `linear-gradient(45deg, ${theme.palette.primary.main} 30%, ${theme.palette.primary.dark} 90%)`,
+  background: theme.palette.mode === "dark"
+    ? `linear-gradient(45deg, ${theme.palette.primary.dark} 30%, ${theme.palette.primary.main} 90%)`
+    : `linear-gradient(45deg, ${theme.palette.primary.main} 30%, ${theme.palette.primary.light} 90%)`,
   color: theme.palette.primary.contrastText,
   padding: theme.spacing(1.5, 3),
   borderRadius: theme.shape.borderRadius * 1.5,
   fontSize: "1.1rem",
   fontWeight: 600,
   textTransform: "none", // Modern buttons often don't use uppercase
-  boxShadow: `0 3px 5px 2px ${theme.palette.primary.main}40`, // Subtle shadow based on primary color
+  boxShadow: theme.palette.mode === "dark"
+    ? `0 3px 5px 2px ${theme.palette.primary.dark}40`
+    : `0 3px 5px 2px ${theme.palette.primary.main}40`, // Subtle shadow based on primary color
   transition: "transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out",
   "&:hover": {
     transform: "translateY(-2px)",
-    boxShadow: `0 5px 8px 3px ${theme.palette.primary.main}60`,
-    background: `linear-gradient(45deg, ${theme.palette.primary.dark} 30%, ${theme.palette.primary.main} 90%)`, // Invert gradient on hover
+    boxShadow: theme.palette.mode === "dark"
+      ? `0 5px 8px 3px ${theme.palette.primary.dark}60`
+      : `0 5px 8px 3px ${theme.palette.primary.main}60`,
+    background: theme.palette.mode === "dark"
+      ? `linear-gradient(45deg, ${theme.palette.primary.main} 30%, ${theme.palette.primary.dark} 90%)`
+      : `linear-gradient(45deg, ${theme.palette.primary.dark} 30%, ${theme.palette.primary.main} 90%)`, // Invert gradient on hover
   },
 }));
 

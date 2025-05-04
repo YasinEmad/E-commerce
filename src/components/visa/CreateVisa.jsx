@@ -212,10 +212,14 @@ function CreateVisa() {
     position: "relative",
     overflow: "hidden",
     borderRadius: "16px",
-    backgroundColor: "rgba(255, 255, 255, 0.9)",
+    backgroundColor: theme.palette.mode === "dark" 
+      ? 'rgba(30, 30, 35, 0.9)'
+      : 'rgba(255, 255, 255, 0.9)',
     backdropFilter: "blur(10px)",
     border: `1px solid ${theme.palette.divider}`,
-    boxShadow: "0 10px 30px rgba(0,0,0,0.1)",
+    boxShadow: theme.palette.mode === "dark"
+      ? "0 10px 30px rgba(0,0,0,0.3)"
+      : "0 10px 30px rgba(0,0,0,0.1)",
   };
 
   const topBorderStyle = {
@@ -228,8 +232,12 @@ function CreateVisa() {
   const sectionPaperStyle = {
     padding: theme.spacing(3),
     borderRadius: "12px",
-    backgroundColor: "rgba(255, 255, 255, 0.95)",
-    boxShadow: "0 4px 15px rgba(0,0,0,0.05)",
+    backgroundColor: theme.palette.mode === "dark"
+      ? 'rgba(45, 45, 50, 0.95)'
+      : 'rgba(255, 255, 255, 0.95)',
+    boxShadow: theme.palette.mode === "dark"
+      ? "0 4px 15px rgba(0,0,0,0.2)"
+      : "0 4px 15px rgba(0,0,0,0.05)",
     height: "100%",
     display: "flex",
     flexDirection: "column",

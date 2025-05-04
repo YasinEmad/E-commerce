@@ -171,8 +171,12 @@ function VisaDisplay({ visaData }) {
                         minHeight: { xs: 350, sm: 400, md: 450 },
                         p: { xs: 2, sm: 3, md: 4 },
                         borderRadius: 3,
-                        background: "linear-gradient(145deg, #f0f4f8, #ffffff)",
-                        boxShadow: "0 8px 25px rgba(0,0,0,0.04)",
+                        background: theme.palette.mode === "dark"
+                            ? "linear-gradient(145deg, #1a1a1a, #2d2d2d)"
+                            : "linear-gradient(145deg, #f0f4f8, #ffffff)",
+                        boxShadow: theme.palette.mode === "dark"
+                            ? "0 8px 25px rgba(0,0,0,0.2)"
+                            : "0 8px 25px rgba(0,0,0,0.04)",
                     }}
                 >
                     <motion.div
@@ -252,6 +256,7 @@ function VisaDisplay({ visaData }) {
                     transition: "box-shadow 0.3s ease-in-out, border 0.3s ease-in-out",
                     border: wasJustCreated ? `2px solid ${theme.palette.success.main}` : `2px solid transparent`,
                     boxShadow: wasJustCreated ? `0 0 20px ${theme.palette.success.light}` : theme.shadows[6],
+                    bgcolor: theme.palette.mode === "dark" ? "grey.900" : "background.paper",
                 }}
             >
                 <CardContent sx={{ position: "relative", zIndex: 1, p: { xs: 2, sm: 3 } }}>
@@ -294,7 +299,9 @@ function VisaDisplay({ visaData }) {
                                 variants={contentVariants}
                                 whileHover={{
                                     scale: 1.015,
-                                    boxShadow: `0 6px 15px rgba(0, 0, 0, 0.1)`,
+                                    boxShadow: theme.palette.mode === "dark"
+                                        ? "0 6px 15px rgba(0, 0, 0, 0.3)"
+                                        : "0 6px 15px rgba(0, 0, 0, 0.1)",
                                     transition: { duration: 0.2 }
                                 }}
                             >
@@ -304,7 +311,9 @@ function VisaDisplay({ visaData }) {
                                         p: { xs: 2, sm: 2.5 },
                                         mb: 3,
                                         borderRadius: { xs: 2, sm: 3 },
-                                        backgroundImage: "linear-gradient(135deg, #42a5f5 0%, #1e88e5 60%, #0d47a1 100%)",
+                                        backgroundImage: theme.palette.mode === "dark"
+                                            ? "linear-gradient(135deg, #1e88e5 0%, #0d47a1 100%)"
+                                            : "linear-gradient(135deg, #42a5f5 0%, #1e88e5 60%, #0d47a1 100%)",
                                         color: "white",
                                         position: "relative",
                                         overflow: "hidden",
@@ -314,7 +323,9 @@ function VisaDisplay({ visaData }) {
                                         display: 'flex',
                                         flexDirection: 'column',
                                         justifyContent: 'space-between',
-                                        boxShadow: '0 4px 12px rgba(0,0,0,0.2)',
+                                        boxShadow: theme.palette.mode === "dark"
+                                            ? "0 4px 12px rgba(0,0,0,0.3)"
+                                            : "0 4px 12px rgba(0,0,0,0.2)",
                                     }}
                                 >
                                     <Box sx={{
@@ -379,17 +390,23 @@ function VisaDisplay({ visaData }) {
 
                             <Typography variant="body2" color="error" sx={{
                                 mb: 2.5, fontWeight: 500, p: 1.5,
-                                bgcolor: "error.lighter",
-                                color: "error.darker",
+                                bgcolor: theme.palette.mode === "dark"
+                                    ? "error.dark"
+                                    : "error.lighter",
+                                color: theme.palette.mode === "dark"
+                                    ? "error.light"
+                                    : "error.darker",
                                 borderRadius: 1,
-                                border: `1px solid ${theme.palette.error.light}`,
+                                border: `1px solid ${theme.palette.error.main}`,
                             }}>
                                 مهم: احتفظ بمعرف البطاقة وكلمة المرور للدفع لاحقاً! كلمة المرور لن تظهر مرة أخرى.
                             </Typography>
 
                             <Grid container spacing={2.5}>
                                 <Grid item xs={12} md={6}>
-                                    <Box sx={{ p: 2, bgcolor: "grey.100", borderRadius: 2, height: '100%' }}>
+                                    <Box sx={{ p: 2, bgcolor: theme.palette.mode === "dark"
+                                        ? "grey.800"
+                                        : "grey.100", borderRadius: 2, height: '100%' }}>
                                         <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 0.5 }}>
                                             <Typography variant="body1" sx={{ fontWeight: 600 }} noWrap>
                                                 معرف البطاقة (للدفع):
@@ -452,7 +469,16 @@ function VisaDisplay({ visaData }) {
                             </Grid>
 
                             <Grid item xs={12} sx={{ mt: 3 }}>
-                                <Paper elevation={0} sx={{ p: { xs: 1.5, sm: 2 }, borderRadius: 2, bgcolor: "grey.50" }}>
+                                <Paper elevation={0} sx={{ 
+                                    p: { xs: 1.5, sm: 2 }, 
+                                    borderRadius: 2, 
+                                    bgcolor: theme.palette.mode === "dark" 
+                                        ? "background.paper"
+                                        : "grey.50",
+                                    border: theme.palette.mode === "dark"
+                                        ? `1px solid ${theme.palette.divider}`
+                                        : "none"
+                                }}>
                                     <Grid container spacing={2} rowSpacing={1.5}>
                                         {[
                                             { icon: Person, label: "اسم الحامل", value: visaData.cardHolderName },
@@ -465,11 +491,64 @@ function VisaDisplay({ visaData }) {
                                             { icon: CheckCircle, label: "الحالة", value: isActive ? "نشطة" : "غير نشطة", color: isActive ? "success.main" : "text.disabled" },
                                         ].map((item, index) => (
                                             <Grid item xs={12} sm={6} key={index}>
-                                                <Box sx={{ display: "flex", alignItems: "center" }}>
-                                                    <item.icon fontSize="small" sx={{ mr: 1, color: item.color || "primary.main", flexShrink: 0 }} />
-                                                    <Typography variant="body2" component="div" noWrap sx={{ display: 'flex', alignItems: 'baseline', gap: 0.5 }}>
-                                                        <Box component="span" fontWeight="bold">{item.label}:</Box>
-                                                        <Box component="span" sx={{ color: 'text.secondary', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                                                <Box sx={{ 
+                                                    display: "flex", 
+                                                    alignItems: "center",
+                                                    p: 1.5,
+                                                    borderRadius: 1,
+                                                    bgcolor: theme.palette.mode === "dark" 
+                                                        ? 'rgba(255, 255, 255, 0.05)'
+                                                        : 'rgba(0, 0, 0, 0.02)',
+                                                    '&:hover': {
+                                                        bgcolor: theme.palette.mode === "dark"
+                                                            ? 'rgba(255, 255, 255, 0.1)'
+                                                            : 'rgba(0, 0, 0, 0.04)',
+                                                    }
+                                                }}>
+                                                    <item.icon fontSize="small" 
+                                                        sx={{ 
+                                                            mr: 1.5, 
+                                                            color: item.color || (theme.palette.mode === "dark" 
+                                                                ? theme.palette.primary.light 
+                                                                : theme.palette.primary.main),
+                                                            opacity: theme.palette.mode === "dark" ? 0.9 : 1,
+                                                            flexShrink: 0 
+                                                        }} 
+                                                    />
+                                                    <Typography 
+                                                        variant="body2" 
+                                                        component="div" 
+                                                        noWrap 
+                                                        sx={{ 
+                                                            display: 'flex', 
+                                                            alignItems: 'baseline', 
+                                                            gap: 1,
+                                                            width: '100%',
+                                                            justifyContent: 'space-between'
+                                                        }}
+                                                    >
+                                                        <Box 
+                                                            component="span" 
+                                                            fontWeight="bold"
+                                                            sx={{
+                                                                color: theme.palette.mode === "dark"
+                                                                    ? theme.palette.grey[300]
+                                                                    : theme.palette.grey[800]
+                                                            }}
+                                                        >
+                                                            {item.label}:
+                                                        </Box>
+                                                        <Box 
+                                                            component="span" 
+                                                            sx={{ 
+                                                                color: theme.palette.mode === "dark"
+                                                                    ? theme.palette.grey[400]
+                                                                    : theme.palette.grey[700],
+                                                                overflow: 'hidden', 
+                                                                textOverflow: 'ellipsis',
+                                                                fontFamily: item.label === "رقم البطاقة" ? "monospace" : "inherit"
+                                                            }}
+                                                        >
                                                             {item.value || 'N/A'}
                                                         </Box>
                                                     </Typography>

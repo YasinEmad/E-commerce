@@ -14,9 +14,9 @@ import {
   Paper,
   TableContainer,
   Skeleton,
-  Button,
+  // Removed Button import as it's no longer used for actions
   Chip,
-  Tooltip as MuiTooltip,
+  Tooltip as 
   Alert,
   Snackbar,
 } from "@mui/material";
@@ -38,14 +38,15 @@ import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import PendingIcon from "@mui/icons-material/Pending";
 import LocalShippingIcon from "@mui/icons-material/LocalShipping";
 import CancelIcon from "@mui/icons-material/Cancel";
-import DeleteIcon from "@mui/icons-material/Delete";
-import { 
-  fetchOrders, 
-  updateOrderStatusAsync,
+// Removed DeleteIcon as it's no longer used
+// Removed updateOrderStatusAsync as handleCancelOrder is removed
+import {
+  fetchOrders,
+  // updateOrderStatusAsync, // Removed as handleCancelOrder is removed
   selectOrders,
   selectOrdersStatus,
   selectOrdersError
-} from "../Redux/ordersSlice";
+} from "../Redux/ordersSlice"; // Assuming setOrders was a mistake and not intended
 
 // Styled components for table
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
@@ -84,6 +85,7 @@ const OrderTrackingPage = () => {
 
   useEffect(() => {
     if (error) {
+      // Still show fetch errors
       showMessage(error, "error");
     }
   }, [error]);
@@ -146,31 +148,42 @@ const OrderTrackingPage = () => {
     dispatch(fetchOrders());
   }, [dispatch]);
 
+  // Removed handleCancelOrder function as the button is removed
+  /*
   const handleCancelOrder = async (orderId, itemId) => {
     try {
-      await dispatch(updateOrderStatusAsync({ 
-        orderId, 
-        itemId, 
-        status: "Cancelled" 
+      await dispatch(updateOrderStatusAsync({
+        orderId,
+        itemId,
+        status: "Cancelled"
       })).unwrap();
       showMessage(language === "العربية" ? "تم إلغاء الطلب بنجاح" : "Order cancelled successfully");
     } catch (error) {
       showMessage(error.message, "error");
     }
   };
+  */
 
+  // Removed handleRemoveItem function as the button is removed
+  /*
   const handleRemoveItem = (orderId, itemId) => {
-    const updatedOrders = orders.map((order) =>
-      order.id === orderId
-        ? {
-            ...order,
-            items: order.items.filter((item) => item.id !== itemId),
-          }
-        : order
-    );
-    dispatch(setOrders(updatedOrders));
+    // This logic should ideally happen via a Redux action/reducer or API call
+    // Directly modifying the state like this is not typical Redux pattern
+    // const updatedOrders = orders.map((order) =>
+    //   order.id === orderId
+    //     ? {
+    //         ...order,
+    //         items: order.items.filter((item) => item.id !== itemId),
+    //       }
+    //     : order
+    // );
+    // Assuming `setOrders` was a placeholder/mistake, removing this logic.
+    // dispatch(setOrders(updatedOrders)); // setOrders is not defined/imported
+    console.warn("Remove item functionality removed.");
   };
+  */
 
+  // Calculate status counts based on fetched orders
   const statusCounts = orders.reduce((acc, order) => {
     order.items.forEach((item) => {
       acc[item.status] = (acc[item.status] || 0) + 1;
@@ -184,10 +197,14 @@ const OrderTrackingPage = () => {
     fill: COLORS[index % COLORS.length],
   }));
 
+  // Calculate product revenue based on fetched orders
   const productRevenueData = orders
     .flatMap((order) => order.items)
     .reduce((acc, item) => {
-      acc[item.title] = (acc[item.title] || 0) + item.price * item.quantity;
+      // Only include items that haven't been cancelled for revenue calculation? Optional.
+      // if (item.status !== 'Cancelled') {
+         acc[item.title] = (acc[item.title] || 0) + item.price * item.quantity;
+      // }
       return acc;
     }, {});
 
@@ -246,13 +263,14 @@ const OrderTrackingPage = () => {
                     <StyledTableCell align="right">{language === "العربية" ? "الكمية" : "Quantity"}</StyledTableCell>
                     <StyledTableCell align="right">{language === "العربية" ? "المجموع" : "Total"}</StyledTableCell>
                     <StyledTableCell align="right">{language === "العربية" ? "حالة المنتج" : "Product Status"}</StyledTableCell>
-                    <StyledTableCell align="right">{language === "العربية" ? "إجراء" : "Action"}</StyledTableCell>
+                    {/* Changed Header for the last column */}
+                    <StyledTableCell align="right">{language === "العربية" ? "ملاحظات" : "Notes"}</StyledTableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
                   {orders.map((order) =>
                     order.items.map((item) => (
-                      <StyledTableRow key={item.id}>
+                      <StyledTableRow key={`${order.id}-${item.id}`}> {/* Ensure unique key if item IDs aren't globally unique */}
                         <StyledTableCell component="th" scope="row">
                           {item.title}
                         </StyledTableCell>
@@ -262,36 +280,11 @@ const OrderTrackingPage = () => {
                         <StyledTableCell align="right">
                           {getStatusChip(item.status, language)}
                         </StyledTableCell>
+                        {/* Replaced Buttons with the requested text */}
                         <StyledTableCell align="right">
-                          {item.status !== "Cancelled" && (
-                            <Box display="flex" justifyContent="flex-end" gap={1}>
-                              <MuiTooltip title={language === "العربية" ? "إلغاء الطلب" : "Cancel Order"}>
-                                <Button
-                                  variant="outlined"
-                                  color="error"
-                                  size="small"
-                                  onClick={() => handleCancelOrder(order.id, item.id)}
-                                  disabled={item.status === "Cancelled"}
-                                  aria-label="cancel order"
-                                  startIcon={<CancelIcon />}
-                                >
-                                  {language === "العربية" ? "إلغاء" : "Cancel"}
-                                </Button>
-                              </MuiTooltip>
-                              <MuiTooltip title={language === "العربية" ? "حذف العنصر" : "Remove Item"}>
-                                <Button
-                                  variant="outlined"
-                                  color="secondary"
-                                  size="small"
-                                  onClick={() => handleRemoveItem(order.id, item.id)}
-                                  aria-label="remove item"
-                                  startIcon={<DeleteIcon />}
-                                >
-                                  {language === "العربية" ? "حذف" : "Remove"}
-                                </Button>
-                              </MuiTooltip>
-                            </Box>
-                          )}
+                          <Typography variant="body2" color="text.secondary">
+                             {language === "العربية" ? "الطلب في الطريق" : "Order is on the way"} {/* Added translation */}
+                          </Typography>
                         </StyledTableCell>
                       </StyledTableRow>
                     ))
@@ -331,10 +324,12 @@ const OrderTrackingPage = () => {
                     <Tooltip />
                     <Legend
                       formatter={(value) => {
+                        // Use original status for icons if available
                         const originalStatus = getOriginalStatus(value);
+                        const icon = STATUS_ICONS[originalStatus] || null;
                         return (
                           <span>
-                            {STATUS_ICONS[originalStatus]} {value}
+                            {icon} {value}
                           </span>
                         );
                       }}
@@ -358,17 +353,25 @@ const OrderTrackingPage = () => {
                 sx={{ border: "1px solid", borderColor: "divider" }}
               >
                 <Typography variant="h6" fontWeight="bold" color="secondary" mb={2} textAlign="center">
-                  {language === "العربية" ? "نسبه الرضا عن المنتج" : "Product satisfaction rate"}
+                  {/* Updated Bar Chart Title based on data */}
+                  {language === "العربية" ? "إيرادات المنتج" : "Product Revenue"}
                 </Typography>
                 <ResponsiveContainer width="100%" height={400}>
-                  <BarChart data={barChartData}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="name" />
-                    <YAxis />
-                    <Tooltip />
-                    <Legend />
-                    <Bar dataKey="revenue" fill="#8884d8" />
-                  </BarChart>
+                  {/* Added check for barChartData length */}
+                  {barChartData.length > 0 ? (
+                    <BarChart data={barChartData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="name" />
+                      <YAxis />
+                      <Tooltip formatter={(value) => `$${value.toFixed(2)}`} />
+                      <Legend />
+                      <Bar dataKey="revenue" fill="#82ca9d" name={language === "العربية" ? "الإيرادات" : "Revenue"}/>
+                    </BarChart>
+                  ) : (
+                    <Typography variant="body1" textAlign="center" color="text.secondary">
+                       {language === "العربية" ? "لا توجد بيانات إيرادات لعرضها." : "No revenue data to display."}
+                    </Typography>
+                  )}
                 </ResponsiveContainer>
               </Box>
             </motion.div>
